@@ -10,26 +10,31 @@ dishRouter.use(bodyParser.json());
 dishRouter
   .route("/")
 
-  .get((request, response, next) => {
+  .get((req, res, next) => {
     Dishes.find()
       .then(
         (dishes) => {
-          response.statusCode = 200;
-          response.setHeader("Content-Type", "application/json");
-          response.join(dishes);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.join(dishes);
         },
         (err) => next(err)
       )
       .catch((err) => next(err));
   })
 
-  .post((request, response, next) => {
-    response.end(
-      "Will add the dish: " +
-        request.body.name +
-        " with details: " +
-        request.body.description
-    );
+  .post((req, res, next) => {
+    Dishes.create(req.body)
+      .then(
+        (dish) => {
+          console.log("Dish created ", dish);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.join(dish);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .put((request, response, next) => {
