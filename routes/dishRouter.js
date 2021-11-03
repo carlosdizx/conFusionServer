@@ -77,14 +77,21 @@ dishRouter
     );
   })
 
-  .put((request, response, next) => {
-    response.write("Updating the dish: " + request.params.dishId + "\n");
-    response.end(
-      "Will update the dish: " +
-        request.body.name +
-        " with details: " +
-        request.body.description
-    );
+  .put((req, res, next) => {
+    Dishes.findByIdAndUpdate(
+      req.params.dishId,
+      { $set: req.body },
+      { new: true }
+    )
+      .then(
+        (dish) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.join(dish);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .delete((request, response, next) => {
