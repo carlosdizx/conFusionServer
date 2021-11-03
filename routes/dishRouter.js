@@ -37,13 +37,22 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .put((request, response, next) => {
-    response.statusCode = 403;
-    response.end("PUT operation not supported on /dishes");
+  .put((req, res, next) => {
+    res.statusCode = 403;
+    res.end("PUT operation not supported on /dishes");
   })
 
-  .delete((request, response, next) => {
-    response.end("Deleting all the dishes!");
+  .delete((req, res, next) => {
+    Dishes.remove({})
+      .then(
+        (result) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.join(result);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   });
 
 dishRouter
