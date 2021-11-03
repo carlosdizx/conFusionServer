@@ -1,8 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
+const Dishes = require("../models/dishes");
 const dishRouter = express.Router();
-const dishRouterId = express.Router();
 
 dishRouter.use(bodyParser.json());
 
@@ -10,7 +11,16 @@ dishRouter
   .route("/")
 
   .get((request, response, next) => {
-    response.end("Will send all the dishes to you!");
+    Dishes.find()
+      .then(
+        (dishes) => {
+          response.statusCode = 200;
+          response.setHeader("Content-Type", "application/json");
+          response.join(dishes);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .post((request, response, next) => {
@@ -30,7 +40,6 @@ dishRouter
   .delete((request, response, next) => {
     response.end("Deleting all the dishes!");
   });
-
 
 dishRouter
   .route("/:dishId")
