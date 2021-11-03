@@ -94,8 +94,17 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .delete((request, response, next) => {
-    response.end("Deleting dish:" + request.params.dishId);
+  .delete((req, res, next) => {
+    Dishes.findByIdAndRemove(req.params.dishId)
+      .then(
+        (result) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.join(result);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   });
 
 module.exports = dishRouter;
