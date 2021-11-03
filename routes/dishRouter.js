@@ -16,7 +16,7 @@ dishRouter
         (dishes) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.join(dishes);
+          res.json(dishes);
         },
         (err) => next(err)
       )
@@ -30,7 +30,7 @@ dishRouter
           console.log("Dish created ", dish);
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.join(dish);
+          res.json(dish);
         },
         (err) => next(err)
       )
@@ -48,7 +48,7 @@ dishRouter
         (result) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.join(result);
+          res.json(result);
         },
         (err) => next(err)
       )
@@ -63,7 +63,7 @@ dishRouter
         (dish) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.join(dish);
+          res.json(dish);
         },
         (err) => next(err)
       )
@@ -87,7 +87,7 @@ dishRouter
         (dish) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.join(dish);
+          res.json(dish);
         },
         (err) => next(err)
       )
@@ -100,7 +100,7 @@ dishRouter
         (result) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.join(result);
+          res.json(result);
         },
         (err) => next(err)
       )
