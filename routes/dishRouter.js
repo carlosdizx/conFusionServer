@@ -57,10 +57,17 @@ dishRouter
 
 dishRouter
   .route("/:dishId")
-  .get((request, response, next) => {
-    response.end(
-      "Will send details of the dish: " + request.params.dishId + " to you!"
-    );
+  .get((req, res, next) => {
+    Dishes.findById(req.params.dishId)
+      .then(
+        (dish) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.join(dish);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .post((request, response, next) => {
