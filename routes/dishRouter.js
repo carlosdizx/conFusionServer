@@ -228,16 +228,32 @@ dishRouter
   })
 
   .put((req, res, next) => {
-    Dishes.findByIdAndUpdate(
-      req.params.dishId,
-      { $set: req.body },
-      { new: true }
-    )
+    Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(dish);
+          if (dish != null && dish.comments.id(req.params.commentId)) {
+            if (req.body.rating) {
+              dish.comments.id(req.params.commentId).rating = req.body.rating;
+            }
+            if (req.body.comment) {
+              dish.comments.id(req.params.commentId).comment = req.body.comment;
+            }
+            dish.save().then((dish) => {
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              res.json(dish);
+            });
+          } else if (dish == null) {
+            const err = new Error("Dish " + req.params.dishId + " not found");
+            err.status = 404;
+            return next(err);
+          } else {
+            const err = new Error(
+              "Comment " + req.params.commentId + " not found"
+            );
+            err.status = 404;
+            return next(err);
+          }
         },
         (err) => next(err)
       )
