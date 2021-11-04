@@ -22,13 +22,18 @@ promotionRouter
       .catch((err) => next(err));
   })
 
-  .post((request, response, next) => {
-    response.end(
-      "Will add the promotion: " +
-        request.body.name +
-        " with details: " +
-        request.body.description
-    );
+  .post((req, res, next) => {
+    Promotions.create(req.body)
+      .then(
+        (promotion) => {
+          console.log("Promotion created ", promotion);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(promotion);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .put((request, response, next) => {
