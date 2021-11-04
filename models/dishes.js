@@ -14,8 +14,8 @@ const commentSchema = new Schema(
 
 const dishSquema = new Schema(
   {
-    name: { type: "string", required: true, unique: true },
-    description: { type: "string", required: true },
+    name: { type: String, required: true, unique: true },
+    description: { type: String, required: true },
     comments: [commentSchema],
     image: { type: String, required: true },
     category: { type: String, required: true },
