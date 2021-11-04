@@ -35,9 +35,9 @@ promotionRouter
       .catch((err) => next(err));
   })
 
-  .put((request, response, next) => {
-    response.statusCode = 403;
-    response.end("PUT operation not supported on /promotions");
+  .put((req, res, next) => {
+    res.statusCode = 403;
+    res.end("PUT operation not supported on /promotions");
   })
 
   .delete((req, res, next) => {
@@ -68,11 +68,11 @@ promotionRouter
       .catch((err) => next(err));
   })
 
-  .post((request, response, next) => {
-    response.statusCode = 403;
-    response.end(
+  .post((req, res, next) => {
+    res.statusCode = 403;
+    res.end(
       "POST operation not supported on /promotions/" +
-        request.params.promotionId
+        req.params.promotionId
     );
   })
 
@@ -93,8 +93,12 @@ promotionRouter
       .catch((err) => next(err));
   })
 
-  .delete((request, response, next) => {
-    response.end("Deleting promotion:" + request.params.promotionId);
+  .delete((req, res, next) => {
+    Promotions.findByIdAndRemove(req.params.promotionId).then((result) => {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.json(result);
+    });
   });
 
 module.exports = promotionRouter;
