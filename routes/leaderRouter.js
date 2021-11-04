@@ -92,8 +92,12 @@ leaderRouter
       .catch((err) => next(err));
   })
 
-  .delete((request, response, next) => {
-    response.end("Deleting leader:" + request.params.leaderId);
+  .delete((req, res, next) => {
+    Leaders.findByIdAndRemove(req.params.leaderId).then((result) => {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.json(result);
+    });
   });
 
 module.exports = leaderRouter;
