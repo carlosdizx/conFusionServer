@@ -136,12 +136,14 @@ dishRouter
       .then(
         (dish) => {
           if (dish != null) {
-            dish.comments.push(req.body);
+            const comments = JSON.parse(JSON.stringify(dish.comments));
+            comments.push(req.body);
+            dish.comments = comments;
             dish.save().then(
               (dish) => {
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");
-                res.json(dish);
+                res.json(dish.comments);
               },
               (err) => next(err)
             );
@@ -261,12 +263,34 @@ dishRouter
   })
 
   .delete((req, res, next) => {
-    Dishes.findByIdAndRemove(req.params.dishId)
+    Dishes.findById(req.params.dishId)
       .then(
-        (result) => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(result);
+        (dish) => {
+          if (dish != null && dish.comments.id(req.params.commentId)) {
+            dish.comments.id(req.params.commentId).remove();
+            /*
+            dish.comments = dish.comments.filter(
+              (comment) => comment._id != req.params.commentId
+            );*/
+            dish.save().then(
+              (dish) => {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.json(dish);
+              },
+              (err) => next(err)
+            );
+          } else if (dish == null) {
+            const err = new Error("Dish " + req.params.dishId + " not found");
+            err.status = 404;
+            return next(err);
+          } else {
+            const err = new Error(
+              "Comment " + req.params.commentId + " not found"
+            );
+            err.status = 404;
+            return next(err);
+          }
         },
         (err) => next(err)
       )
