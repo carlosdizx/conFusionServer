@@ -26,7 +26,6 @@ promotionRouter
     Promotions.create(req.body)
       .then(
         (promotion) => {
-          console.log("Promotion created ", promotion);
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
           res.json(promotion);
@@ -56,12 +55,17 @@ promotionRouter
 
 promotionRouter
   .route("/:promotionId")
-  .get((request, response, next) => {
-    response.end(
-      "Will send details of the promotion: " +
-        request.params.promotionId +
-        " to you!"
-    );
+  .get((req, res, next) => {
+    Promotions.findById(req.params.promotionId)
+      .then(
+        (promotion) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(promotion);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .post((request, response, next) => {
