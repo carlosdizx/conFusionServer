@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const Promotions = require("../models/promotions");
 const promotionRouter = express.Router();
 
 promotionRouter.use(bodyParser.json());
@@ -8,8 +9,17 @@ promotionRouter.use(bodyParser.json());
 promotionRouter
   .route("/")
 
-  .get((request, response, next) => {
-    response.end("Will send all the promotions to you!");
+  .get((req, res, next) => {
+    Promotions.find()
+      .then(
+        (promotions) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(promotions);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .post((request, response, next) => {
@@ -34,19 +44,24 @@ promotionRouter
   .route("/:promotionId")
   .get((request, response, next) => {
     response.end(
-      "Will send details of the promotion: " + request.params.promotionId + " to you!"
+      "Will send details of the promotion: " +
+        request.params.promotionId +
+        " to you!"
     );
   })
 
   .post((request, response, next) => {
     response.statusCode = 403;
     response.end(
-      "POST operation not supported on /promotions/" + request.params.promotionId
+      "POST operation not supported on /promotions/" +
+        request.params.promotionId
     );
   })
 
   .put((request, response, next) => {
-    response.write("Updating the promotion: " + request.params.promotionId + "\n");
+    response.write(
+      "Updating the promotion: " + request.params.promotionId + "\n"
+    );
     response.end(
       "Will update the promotion: " +
         request.body.name +

@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
 
 const Dishes = require("../models/dishes");
 const dishRouter = express.Router();
@@ -70,10 +69,10 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .post((request, response, next) => {
-    response.statusCode = 403;
-    response.end(
-      "POST operation not supported on /dishes/" + request.params.dishId
+  .post((req, res, next) => {
+    res.statusCode = 403;
+    res.end(
+      "POST operation not supported on /dishes/" + req.params.dishId
     );
   })
 
