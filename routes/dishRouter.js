@@ -243,7 +243,7 @@ dishRouter
             dish.save().then((dish) => {
               res.statusCode = 200;
               res.setHeader("Content-Type", "application/json");
-              res.json(dish);
+              res.json(dish.comments.id(req.params.commentId));
             });
           } else if (dish == null) {
             const err = new Error("Dish " + req.params.dishId + " not found");
