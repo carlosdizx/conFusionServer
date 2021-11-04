@@ -41,8 +41,17 @@ promotionRouter
     response.end("PUT operation not supported on /promotions");
   })
 
-  .delete((request, response, next) => {
-    response.end("Deleting all the promotions!");
+  .delete((req, res, next) => {
+    Promotions.remove({})
+      .then(
+        (result) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(result);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   });
 
 promotionRouter
