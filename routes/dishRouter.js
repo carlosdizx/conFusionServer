@@ -132,13 +132,24 @@ dishRouter
   })
 
   .post((req, res, next) => {
-    Dishes.create(req.body)
+    Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
-          console.log("Dish created ", dish);
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(dish);
+          if (dish != null) {
+            dish.comments.push(req.body);
+            dish.save().then(
+              (dish) => {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.json(dish);
+              },
+              (err) => next(err)
+            );
+          } else {
+            const err = new Error("dish " + req.params.dishId + " not found");
+            err.status = 404;
+            return next(err);
+          }
         },
         (err) => next(err)
       )
