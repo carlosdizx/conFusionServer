@@ -9,35 +9,48 @@ leaderRouter.use(bodyParser.json());
 leaderRouter
   .route("/")
 
-  .get((request, response, next) => {
+  .get((req, res, next) => {
     Leaders.find()
       .then(
         (leaders) => {
-          response.statusCode = 200;
-          response.setHeader("Content-Type", "application/json");
-          response.json(leaders);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(leaders);
         },
         (err) => next(err)
       )
       .catch((err) => next(err));
   })
 
-  .post((request, response, next) => {
-    response.end(
-      "Will add the leader: " +
-        request.body.name +
-        " with details: " +
-        request.body.description
-    );
+  .post((req, res, next) => {
+    Leaders.create(req.body)
+      .then(
+        (leader) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(leader);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
-  .put((request, response, next) => {
-    response.statusCode = 403;
-    response.end("PUT operation not supported on /leaders");
+  .put((req, res, next) => {
+    res.statusCode = 403;
+    res.end("PUT operation not supported on /leaders");
   })
 
-  .delete((request, response, next) => {
-    response.end("Deleting all the leaders!");
+  .delete((req, res, next) => {
+    Leaders.remove()
+      .then(
+        (result) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(result);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   });
 
 leaderRouter
