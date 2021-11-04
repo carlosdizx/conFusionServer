@@ -55,10 +55,17 @@ leaderRouter
 
 leaderRouter
   .route("/:leaderId")
-  .get((request, response, next) => {
-    response.end(
-      "Will send details of the leader: " + request.params.leaderId + " to you!"
-    );
+  .get((req, res, next) => {
+    Leaders.findById(req.params.leaderId)
+      .then(
+        (leader) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(leader);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .post((request, response, next) => {
@@ -68,14 +75,21 @@ leaderRouter
     );
   })
 
-  .put((request, response, next) => {
-    response.write("Updating the leader: " + request.params.leaderId + "\n");
-    response.end(
-      "Will update the leader: " +
-        request.body.name +
-        " with details: " +
-        request.body.description
-    );
+  .put((req, res, next) => {
+    Leaders.findByIdAndUpdate(
+      req.params.leaderId,
+      { $set: req.body },
+      { new: true }
+    )
+      .then(
+        (leader) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(leader);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .delete((request, response, next) => {
