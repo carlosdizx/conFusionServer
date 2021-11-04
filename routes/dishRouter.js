@@ -121,7 +121,7 @@ dishRouter
             res.setHeader("Content-Type", "application/json");
             res.json(dish.comments);
           } else {
-            const err = new Error("dish " + req.params.dishId + " not found");
+            const err = new Error("Dish " + req.params.dishId + " not found");
             err.status = 404;
             return next(err);
           }
@@ -146,7 +146,7 @@ dishRouter
               (err) => next(err)
             );
           } else {
-            const err = new Error("dish " + req.params.dishId + " not found");
+            const err = new Error("Dish " + req.params.dishId + " not found");
             err.status = 404;
             return next(err);
           }
@@ -180,7 +180,7 @@ dishRouter
               (err) => next(err)
             );
           } else {
-            const err = new Error("dish " + req.params.dishId + " not found");
+            const err = new Error("Dish " + req.params.dishId + " not found");
             err.status = 404;
             return next(err);
           }
@@ -196,19 +196,34 @@ dishRouter
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(dish);
+          if (dish != null && dish.comments.id(req.params.commentId)) {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(dish.comments.id(req.params.commentId));
+          } else if (dish == null) {
+            const err = new Error("Dish " + req.params.dishId + " not found");
+            err.status = 404;
+            return next(err);
+          } else {
+            const err = new Error(
+              "Comment " + req.params.commentId + " not found"
+            );
+            err.status = 404;
+            return next(err);
+          }
         },
         (err) => next(err)
       )
       .catch((err) => next(err));
   })
 
-  .post((request, response, next) => {
-    response.statusCode = 403;
-    response.end(
-      "POST operation not supported on /dishes/" + request.params.dishId
+  .post((req, res, next) => {
+    res.statusCode = 403;
+    res.end(
+      "POST operation not supported on /dishes/" +
+        req.params.dishId +
+        "/comments/" +
+        req.params.commentId
     );
   })
 
