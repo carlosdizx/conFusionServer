@@ -158,16 +158,32 @@ dishRouter
 
   .put((req, res, next) => {
     res.statusCode = 403;
-    res.end("PUT operation not supported on /dishes");
+    res.end(
+      "PUT operation not supported on /dishes/" +
+        req.params.dishId +
+        "/comments"
+    );
   })
 
   .delete((req, res, next) => {
-    Dishes.remove({})
+    Dishes.findById(req.params.dishId)
       .then(
-        (result) => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(result);
+        (dish) => {
+          if (dish != null) {
+            dish.comments = [];
+            dish.save().then(
+              (dish) => {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.json(dish);
+              },
+              (err) => next(err)
+            );
+          } else {
+            const err = new Error("dish " + req.params.dishId + " not found");
+            err.status = 404;
+            return next(err);
+          }
         },
         (err) => next(err)
       )
