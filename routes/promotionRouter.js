@@ -76,16 +76,21 @@ promotionRouter
     );
   })
 
-  .put((request, response, next) => {
-    response.write(
-      "Updating the promotion: " + request.params.promotionId + "\n"
-    );
-    response.end(
-      "Will update the promotion: " +
-        request.body.name +
-        " with details: " +
-        request.body.description
-    );
+  .put((req, res, next) => {
+    Promotions.findByIdAndUpdate(
+      req.params.promotionId,
+      { $set: req.body },
+      { new: true }
+    )
+      .then(
+        (promotions) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(promotions);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .delete((request, response, next) => {
