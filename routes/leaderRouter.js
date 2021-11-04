@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const Leaders = require("../models/leaders");
 const leaderRouter = express.Router();
 
 leaderRouter.use(bodyParser.json());
@@ -9,7 +10,16 @@ leaderRouter
   .route("/")
 
   .get((request, response, next) => {
-    response.end("Will send all the leaders to you!");
+    Leaders.find()
+      .then(
+        (leaders) => {
+          response.statusCode = 200;
+          response.setHeader("Content-Type", "application/json");
+          response.json(leaders);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
   })
 
   .post((request, response, next) => {
