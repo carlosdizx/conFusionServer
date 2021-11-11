@@ -11,7 +11,7 @@ router.get("/", function (req, res) {
 });
 
 router.post("/singup", function (req, res, next) {
-  User.findOne({ username: req.body.user })
+  User.findOne({ username: req.body.username })
     .then((user) => {
       if (user) {
         const error = new Error(
@@ -60,7 +60,7 @@ router.post("/login", (req, res, next) => {
     User.findOne({ username: username })
       .then((user) => {
         if (!user) {
-          const err = new Error("User " + user + " does not exists");
+          const err = new Error("User " + username + " does not exists");
           res.setHeader("WWW-Authenticate", "Basic");
           err.status = 403;
           return next(err);
