@@ -11,7 +11,6 @@ const promotionRouter = require("./routes/promotionRouter");
 const leaderRouter = require("./routes/leaderRouter");
 
 const mongoose = require("mongoose");
-const Dishes = require("./models/dishes");
 
 const url = "mongodb://localhost:27017/conFusion";
 const connect = mongoose.connect(url);
@@ -34,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-function auth(req, res, next) {
+const auth = (req, res, next) => {
   console.log(req.headers);
   const authHeader = req.headers.authorization;
 
@@ -55,12 +54,12 @@ function auth(req, res, next) {
   if (user === "admin" && password === "password") {
     next();
   } else {
-    const err = new Error('You are not authenticated!');
-    res.setHeader('WWW-Authenticate', 'Basic');
+    const err = new Error("You are not authenticated!");
+    res.setHeader("WWW-Authenticate", "Basic");
     err.status = 401;
     next(err);
   }
-}
+};
 
 app.use(auth);
 
