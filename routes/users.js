@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const User = require("../models/user");
+const passport = require("passport");
+const { use } = require("express/lib/router");
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -10,33 +12,24 @@ router.get("/", function (req, res) {
   res.send("respond with a resource");
 });
 
-router.post("/singup", function (req, res, next) {
-  User.findOne({ username: req.body.username })
-    .then((user) => {
-      if (user) {
-        const error = new Error(
-          "User " + req.body.username + " already exists!"
-        );
-        error.status = 403;
-        next(error);
+router.post("/singup", (req, res, next) => {
+  User.register(
+    new User({ username: req.body.username }),
+    req.body.password,
+    (err, user) => {
+      if (err) {
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "application/json");
+        res.json(err);
       } else {
-        return User.create({
-          username: req.body.username,
-          password: req.body.password,
+        passport.authenticate("local")(req, res, () => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json({ success: true, status: "success" });
         });
       }
-    })
-    .then(
-      (user) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json({ status: "success", user: user });
-      },
-      (err) => {
-        next(err);
-      }
-    )
-    .catch((err) => next(err));
+    }
+  );
 });
 
 router.post("/login", (req, res, next) => {
