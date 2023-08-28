@@ -22,7 +22,7 @@ const connect = mongoose.connect(url);
 
 connect
   .then((db) => {
-    console.log("Connected correctly to server");
+    console.log("Connected correctly to mongodb");
     console.log("http://localhost:3000");
   })
   .catch((err) => console.log(err));
