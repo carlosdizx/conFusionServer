@@ -13,7 +13,7 @@ router.get("/", function (req, res) {
   res.send("respond with a resource");
 });
 
-router.post("/singup", (req, res, next) => {
+router.post("/register", (req, res, next) => {
   User.register(
     new User({ username: req.body.username }),
     req.body.password,
@@ -26,7 +26,7 @@ router.post("/singup", (req, res, next) => {
         passport.authenticate("local")(req, res, () => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json({ success: true, status: "Singup" });
+          res.json({ success: true, status: "Registration successful" });
         });
       }
     }
