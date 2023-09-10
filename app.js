@@ -10,7 +10,7 @@ const authenticate = require("./authenticate");
 const config = require("./config");
 
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const usersRouter = require("./routes/userRouter");
 const dishRouter = require("./routes/dishRouter");
 const promotionRouter = require("./routes/promotionRouter");
 const leaderRouter = require("./routes/leaderRouter");

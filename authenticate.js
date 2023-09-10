@@ -1,6 +1,6 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const User = require("./models/user");
+const User = require("./models/users");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwtStrategy = require("passport-jwt").ExtractJwt;
 const jwt = require("jsonwebtoken");
@@ -35,4 +35,4 @@ exports.jwtPassport = passport.use(
   })
 );
 
-exports.verifyUser = passport.authenticate('jwt',{session:false})
+exports.verifyUser = passport.authenticate("jwt", { session: false });
