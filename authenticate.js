@@ -31,3 +31,13 @@ exports.jwtPassport = passport.use(
 );
 
 exports.verifyUser = passport.authenticate("jwt", { session: false });
+
+exports.verifyAdmin = (req, res, next) => {
+  const isAdmin = req.user.admin;
+  if (!isAdmin) {
+    const error = new Error("You are not allowed to access this!");
+    error.status = 403;
+    next(error);
+  }
+  next();
+};
