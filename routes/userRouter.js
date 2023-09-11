@@ -3,14 +3,18 @@ const bodyParser = require("body-parser");
 const User = require("../models/users");
 const passport = require("passport");
 const { use } = require("express/lib/router");
-const authenticate = require("../authenticate");
+const { getToken, verifyUser, verifyAdmin } = require("../authenticate");
 
 const router = express.Router();
 router.use(bodyParser.json());
 
 /* GET users listing. */
-router.get("/", function (req, res) {
-  res.send("respond with a resource");
+router.get("/", verifyUser, verifyAdmin, (req, res) => {
+  User.find({}).then((users) => {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json(users);
+  });
 });
 
 router.post("/register", (req, res, next) => {
@@ -44,7 +48,7 @@ router.post("/register", (req, res, next) => {
 });
 
 router.post("/login", passport.authenticate("local"), (req, res) => {
-  const token = authenticate.getToken({ _id: req.user._id });
+  const token = getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.json({ success: true, token, status: "Login successful" });
