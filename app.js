@@ -7,7 +7,7 @@ const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const passport = require("passport");
 const authenticate = require("./authenticate");
-const config = require("./config");
+const { mongoUrl } = require("./config");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/userRouter");
@@ -17,8 +17,7 @@ const leaderRouter = require("./routes/leaderRouter");
 
 const mongoose = require("mongoose");
 
-const url = config.mongoUrl;
-const connect = mongoose.connect(url);
+const connect = mongoose.connect(mongoUrl);
 
 connect
   .then((db) => {

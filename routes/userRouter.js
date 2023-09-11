@@ -37,7 +37,7 @@ router.post("/login", passport.authenticate("local"), (req, res) => {
   const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({ success: true, token: token, status: "Login successful" });
+  res.json({ success: true, token, status: "Login successful" });
 });
 
 router.get("/logout", (req, res, next) => {
