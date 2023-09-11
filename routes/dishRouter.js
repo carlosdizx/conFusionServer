@@ -172,7 +172,7 @@ dishRouter
     );
   })
 
-  .delete(verifyUser, (req, res, next) => {
+  .delete(verifyUser, verifyAdmin, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
@@ -235,41 +235,44 @@ dishRouter
     );
   })
 
-  .put(verifyUser, (req, res, next) => {
-    Dishes.findById(req.params.dishId)
-      .then(
-        (dish) => {
-          if (dish != null && dish.comments.id(req.params.commentId)) {
-            if (req.body.rating) {
-              dish.comments.id(req.params.commentId).rating = req.body.rating;
-            }
-            if (req.body.comment) {
-              dish.comments.id(req.params.commentId).comment = req.body.comment;
-            }
-            dish.save().then((dish) => {
-              Dishes.findById(dish._id)
-                .populate("comments.author")
-                .then((dish) => {
-                  res.statusCode = 200;
-                  res.setHeader("Content-Type", "application/json");
-                  res.json(dish.comments.id(req.params.commentId));
-                });
-            });
-          } else if (dish == null) {
-            const err = new Error("Dish " + req.params.dishId + " not found");
-            err.status = 404;
-            return next(err);
-          } else {
-            const err = new Error(
-              "Comment " + req.params.commentId + " not found"
-            );
-            err.status = 404;
-            return next(err);
-          }
-        },
-        (err) => next(err)
-      )
-      .catch((err) => next(err));
+  .put(verifyUser, async (req, res, next) => {
+    try {
+      const dish = await Dishes.findById(req.params.dishId);
+
+      if (dish && dish.comments.id(req.params.commentId)) {
+        const find = dish.comments.find(
+          ({ _id, author }) =>
+            _id == req.params.commentId && `${author}` == req.user._id
+        );
+        if (!find) {
+          res.statusCode = 403;
+          return res.end("You are not allowed to modify this comment");
+        }
+        if (req.body.rating)
+          dish.comments.id(req.params.commentId).rating = req.body.rating;
+        if (req.body.comment)
+          dish.comments.id(req.params.commentId).comment = req.body.comment;
+        await dish.save();
+
+        const updatedDish = await Dishes.findById(dish._id).populate(
+          "comments.author"
+        );
+
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json(updatedDish.comments.id(req.params.commentId));
+      } else if (dish == null) {
+        const err = new Error("Dish " + req.params.dishId + " not found");
+        err.status = 404;
+        return next(err);
+      } else {
+        const err = new Error("Comment " + req.params.commentId + " not found");
+        err.status = 404;
+        return next(err);
+      }
+    } catch (err) {
+      return next(err);
+    }
   })
 
   .delete(verifyUser, (req, res, next) => {
@@ -277,6 +280,15 @@ dishRouter
       .then(
         (dish) => {
           if (dish != null && dish.comments.id(req.params.commentId)) {
+            const find = dish.comments.find(
+              ({ _id, author }) =>
+                _id == req.params.commentId && `${author}` == req.user._id
+            );
+            if (!find) {
+              res.statusCode = 403;
+              return res.end("You are not allowed to modify this comment");
+            }
+
             dish.comments.id(req.params.commentId).remove();
             /*
             dish.comments = dish.comments.filter(
