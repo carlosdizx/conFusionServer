@@ -131,7 +131,7 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .post(verifyUser, verifyAdmin, (req, res, next) => {
+  .post(verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
@@ -163,7 +163,7 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .put(verifyUser, verifyAdmin, (req, res, next) => {
+  .put(verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end(
       "PUT operation not supported on /dishes/" +
@@ -172,7 +172,7 @@ dishRouter
     );
   })
 
-  .delete(verifyUser, verifyAdmin, (req, res, next) => {
+  .delete(verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
@@ -225,7 +225,7 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .post(verifyUser, verifyAdmin, (req, res, next) => {
+  .post(verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end(
       "POST operation not supported on /dishes/" +
@@ -235,7 +235,7 @@ dishRouter
     );
   })
 
-  .put(verifyUser, verifyAdmin, (req, res, next) => {
+  .put(verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
@@ -272,7 +272,7 @@ dishRouter
       .catch((err) => next(err));
   })
 
-  .delete(verifyUser, verifyAdmin, (req, res, next) => {
+  .delete(verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
